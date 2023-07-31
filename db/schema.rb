@@ -30,9 +30,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_105646) do
   end
 
   create_table "wishlists", force: :cascade do |t|
-    t.string "descrition"
+    t.string "description"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_wishlists_on_user_id"
   end
 
+  add_foreign_key "wishlists", "users"
 end
