@@ -2,6 +2,7 @@
 
 class BoxesController < ApplicationController
     before_action :set_box, only: [:show, :update, :destroy]
+    before_action :authenticate_user!, except: [:index, :show] # Проверка аутентификации пользователя, кроме методов index и show
   
     # GET /boxes
     def index
@@ -16,7 +17,7 @@ class BoxesController < ApplicationController
   
     # POST /boxes
     def create
-      box = Box.new(box_params)
+      box = current_user.administration_boxes.build(box_params) # Создание коробки через ассоциацию current_user.administration_box
       if box.save
         render json: box, status: :created
       else
@@ -26,17 +27,25 @@ class BoxesController < ApplicationController
   
     # PATCH/PUT /boxes/:id
     def update
-      if @box.update(box_params)
-        render json: @box
+      if @box.admin == current_user
+        if @box.update(box_params)
+          render json: @box
+        else
+          render json: { errors: @box.errors.full_messages }, status: :unprocessable_entity
+        end
       else
-        render json: { errors: @box.errors.full_messages }, status: :unprocessable_entity
+        render json: { error: "You don't have permission to update this box." }, status: :forbidden
       end
     end
   
     # DELETE /boxes/:id
     def destroy
-      @box.destroy
-      head :no_content
+      if @box.admin == current_user
+        @box.destroy
+        head :no_content
+      else
+        render json: { error: "You don't have permission to delete this box." }, status: :forbidden
+      end
     end
   
     private
