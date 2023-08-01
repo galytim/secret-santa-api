@@ -14,4 +14,5 @@ Rails.application.routes.draw do
   resources :users, only: [:show, :update, :destroy] do
     resources :wishlists, only: [:index, :show, :create, :update, :destroy]
   end
+  resources :boxes
 end
