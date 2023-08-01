@@ -1,7 +1,7 @@
 # app/controllers/boxes_controller.rb
 
 class BoxesController < ApplicationController
-    before_action :set_box, only: [:show, :update, :destroy]
+    before_action :set_box, only: [:show, :update, :destroy,:add_participant,:remove_participant]
     before_action :authenticate_user!, except: [:index, :show] # Проверка аутентификации пользователя, кроме методов index и show
   
     # GET /boxes
@@ -47,7 +47,38 @@ class BoxesController < ApplicationController
         render json: { error: "You don't have permission to delete this box." }, status: :forbidden
       end
     end
-  
+    # POST /boxes/:id/add_participant
+    def add_participant
+        user = User.find(params[:user_id])
+    
+        if user == current_user || @box.admin == current_user
+          if @box.participants.include?(user)
+            render json: { error: "User is already a participant in this box." }, status: :unprocessable_entity
+          else
+            @box.participants << user
+            render json: { message: "User successfully added as a participant to this box." }, status: :ok
+          end
+        else
+          render json: { error: "You don't have permission to add this user as a participant." }, status: :forbidden
+        end
+      end
+    
+      # DELETE /boxes/:id/remove_participant
+      def remove_participant
+        user = User.find(params[:user_id])
+    
+        if user == current_user || @box.admin == current_user
+          if @box.participants.include?(user)
+            @box.participants.delete(user)
+            render json: { message: "User successfully removed from participants in this box." }, status: :ok
+          else
+            render json: { error: "User is not a participant in this box." }, status: :unprocessable_entity
+          end
+        else
+          render json: { error: "You don't have permission to remove this user from participants." }, status: :forbidden
+        end
+      end
+
     private
   
     def set_box

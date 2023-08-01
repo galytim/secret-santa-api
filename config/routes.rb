@@ -14,5 +14,10 @@ Rails.application.routes.draw do
   resources :users, only: [:show, :update, :destroy] do
     resources :wishlists, only: [:index, :show, :create, :update, :destroy]
   end
-  resources :boxes
+  resources :boxes do
+    member do
+      post 'add_participant'
+      delete 'remove_participant'
+    end
+  end
 end
