@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_03_070910) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_03_182343) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -37,6 +37,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_03_070910) do
     t.index ["user_id"], name: "index_boxes_users_on_user_id"
   end
 
+  create_table "pairs", force: :cascade do |t|
+    t.bigint "giver_id", null: false
+    t.bigint "recipient_id", null: false
+    t.bigint "box_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["box_id"], name: "index_pairs_on_box_id"
+    t.index ["giver_id", "recipient_id", "box_id"], name: "index_pairs_on_giver_and_recipient_and_box"
+    t.index ["giver_id"], name: "index_pairs_on_giver_id"
+    t.index ["recipient_id"], name: "index_pairs_on_recipient_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -60,5 +72,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_03_070910) do
     t.index ["user_id"], name: "index_wishlists_on_user_id"
   end
 
+  add_foreign_key "pairs", "boxes"
+  add_foreign_key "pairs", "users", column: "giver_id"
+  add_foreign_key "pairs", "users", column: "recipient_id"
   add_foreign_key "wishlists", "users"
 end
