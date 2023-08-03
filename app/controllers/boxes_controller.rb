@@ -94,10 +94,9 @@ class BoxesController < ApplicationController
   # GET /boxes/:id/start
   def start
     @box = Box.find(params[:id])
-    participants = @box.participants.to_a.shuffle
   
     # Проверяем, достаточно ли участников для создания хотя бы одной пары
-    if participants.size <= 1
+    if @box.participants.size <= 1
       render json: { error: "Not enough participants in this box to start the draw." }, status: :unprocessable_entity
       return
     end
@@ -108,22 +107,39 @@ class BoxesController < ApplicationController
       return
     end
   
+    # Обнуляем пары для данной коробки перед запуском розыгрыша
+    @box.pairs.destroy_all
+  
     # Начинаем розыгрыш
     # Используем each_cons для создания пар участников
+    participants = @box.participants.to_a.shuffle
     pairs = participants.each_cons(2).to_a
     pairs << [participants.last, participants.first] if participants.size > 2
   
     # Для каждой пары создаем запись в таблице Pair
-    Pair.create(pairs.map { |pair| { giver: pair.first, recipient: pair.last, box: @box } })
+    pairs.each do |pair|
+      Pair.create(giver: pair.first, recipient: pair.last, box: @box)
+    end
   
-    # Сохраняем список пар в box.pairs
-    box_pairs = pairs.map { |pair| { giver: pair.first, recipient: pair.last } }
-    @box.pairs = box_pairs
+    # Формируем JSON в нужном формате
+    json_response = pairs.map do |pair|
+      {
+        giver_id: pair.first.id,
+        giver_name: pair.first.name,
+        giver_email: pair.first.email,
+        recipient_id: pair.last.id,
+        recipient_name: pair.last.name,
+        recipient_email: pair.last.email,
+        box_id: @box.id,
+        box_name: @box.nameBox
+      }
+    
+    end
   
-    render json: { pairs: @box.pairs }, status: :ok
+    render json: json_response, status: :ok
   end
   
-
+  
   private
 
   def set_box
