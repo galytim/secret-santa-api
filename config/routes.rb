@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   end
   resources :boxes do
     member do
+      get 'start'
       post 'add_participant'
       delete 'remove_participant'
     end
