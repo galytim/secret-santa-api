@@ -120,7 +120,7 @@ class BoxesController < ApplicationController
     box_pairs = pairs.map { |pair| { giver: pair.first, recipient: pair.last } }
     @box.pairs = box_pairs
   
-    render json: { message: 'The game has started. Pairs successfuly created.',  box_pairs }, status: :ok
+    render json: { pairs: @box.pairs }, status: :ok
   end
   
 
