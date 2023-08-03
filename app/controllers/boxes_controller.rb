@@ -6,7 +6,7 @@ class BoxesController < ApplicationController
   
     # GET /boxes
     def index
-      render json: {participated_boxes: current_user.participated_boxes }
+      render json: current_user.participated_boxes 
     end
   
     # GET /boxes/:id
