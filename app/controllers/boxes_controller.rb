@@ -48,6 +48,7 @@ class BoxesController < ApplicationController
         render json: { error: "You don't have permission to delete this box." }, status: :forbidden
       end
     end
+    
     # POST /boxes/:id/add_participant
     def add_participant
         user = User.find(params[:user_id])
@@ -67,19 +68,33 @@ class BoxesController < ApplicationController
       # DELETE /boxes/:id/remove_participant
       def remove_participant
         user = User.find(params[:user_id])
-    
-        if user == current_user || @box.admin == current_user
-          if @box.participants.include?(user)
-            @box.participants.delete(user)
-            render json: { message: "User successfully removed from participants in this box." }, status: :ok
+      
+        if current_user == @box.admin
+          if user == @box.admin
+            new_admin = @box.second_registered_user
+      
+            if new_admin
+              @box.update(admin: new_admin) # или update_attribute(:admin, new_admin)
+              @box.participants.delete(user)
+      
+              render json: { message: "Admin successfully updated." }, status: :ok
+            else
+              @box.destroy
+              head :no_content
+            end
           else
-            render json: { error: "User is not a participant in this box." }, status: :unprocessable_entity
+            if @box.participants.include?(user)
+              @box.participants.delete(user)
+              render json: { message: "User successfully removed from participants in this box." }, status: :ok
+            else
+              render json: { error: "User is not a participant in this box." }, status: :unprocessable_entity
+            end
           end
         else
           render json: { error: "You don't have permission to remove this user from participants." }, status: :forbidden
         end
       end
-
+      
     private
   
     def set_box
@@ -87,7 +102,7 @@ class BoxesController < ApplicationController
     end
   
     def box_params
-      params.require(:box).permit(:nameBox, :dateFrom, :dateTo, :priceFrom, :priceTo, :place, :image)
+      params.require(:box).permit(:nameBox, :dateFrom, :dateTo, :priceFrom, :priceTo, :place,:description, :image)
     end
   end
   
