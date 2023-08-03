@@ -7,4 +7,5 @@ class User < ApplicationRecord
    has_many :administration_boxes, class_name: "Box", foreign_key: "admin_id"
 
    has_and_belongs_to_many :participated_boxes, class_name: "Box"
+   
 end

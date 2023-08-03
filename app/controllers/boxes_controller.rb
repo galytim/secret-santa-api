@@ -12,13 +12,14 @@ class BoxesController < ApplicationController
   
     # GET /boxes/:id
     def show
-      render json: @box
+      render json: { box: @box, participants: @box.participants }
     end
-  
+    
     # POST /boxes
     def create
       box = current_user.administration_boxes.build(box_params) # Создание коробки через ассоциацию current_user.administration_box
       if box.save
+        box.participants << current_user
         render json: box, status: :created
       else
         render json: { errors: box.errors.full_messages }, status: :unprocessable_entity
