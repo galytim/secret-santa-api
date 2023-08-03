@@ -2,17 +2,18 @@
 
 class BoxesController < ApplicationController
     before_action :set_box, only: [:show, :update, :destroy,:add_participant,:remove_participant]
-    before_action :authenticate_user!, except: [:index, :show] # Проверка аутентификации пользователя, кроме методов index и show
+    before_action :authenticate_user! # Проверка аутентификации пользователя, кроме методов index и show
   
     # GET /boxes
     def index
-      boxes = Box.all
-      render json: boxes
+      render json: {participated_boxes: current_user.participated_boxes,administration_boxes: current_user.administration_boxes }
     end
   
     # GET /boxes/:id
     def show
-      render json: { box: @box, participants: @box.participants }
+      current_user_admin = false
+      current_user_admin = true if current_user == @box.admin
+      render json: { box: @box, participants: @box.participants, current_user_admin: current_user_admin}
     end
     
     # POST /boxes
