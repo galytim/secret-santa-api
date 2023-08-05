@@ -59,7 +59,7 @@ class BoxesController < ApplicationController
 
   # POST /boxes/:id/add_participant
   def add_participant
-    user = User.where(email: params[:email])
+    user = User.find_by(email: params[:email])
 
     if user == current_user || @box.admin == current_user
       if @box.participants.include?(user)
