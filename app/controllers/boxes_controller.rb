@@ -1,6 +1,6 @@
 class BoxesController < ApplicationController
   before_action :set_box, except: [:index, :create]
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!
 
   # GET /boxes
   def index
@@ -10,9 +10,19 @@ class BoxesController < ApplicationController
   # GET /boxes/:id
   def show
     current_user_admin = @box.admin == current_user
-    render json: { box: @box, participants: @box.participants, current_user_admin: current_user_admin }
+    recipient = @box.pairs.find_by(giver: current_user)&.recipient
+    participants_data = @box.participants.map { |participant| { id: participant.id, name: participant.name, email: participant.email } }
+    
+    render json: { box: @box, 
+                  participants: participants_data,
+                  current_user_admin: current_user_admin, 
+                  recipient: {
+                    id: recipient&.id,          
+                    name: recipient&.name,
+                    email: recipient&.email
+                  }
+                }
   end
-
   # POST /boxes
   def create
     box = current_user.administration_boxes.build(box_params)
@@ -49,7 +59,7 @@ class BoxesController < ApplicationController
 
   # POST /boxes/:id/add_participant
   def add_participant
-    user = User.find(params[:email])
+    user = User.where(email: params[:email])
 
     if user == current_user || @box.admin == current_user
       if @box.participants.include?(user)
@@ -65,7 +75,7 @@ class BoxesController < ApplicationController
 
   # DELETE /boxes/:id/remove_participant
   def remove_participant
-    user = User.find(params[:email])
+    user = User.find(params[:user_id])
 
     if current_user == @box.admin
       if user == @box.admin
