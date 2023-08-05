@@ -49,7 +49,7 @@ class BoxesController < ApplicationController
 
   # POST /boxes/:id/add_participant
   def add_participant
-    user = User.find(params[:user_id])
+    user = User.find(params[:email])
 
     if user == current_user || @box.admin == current_user
       if @box.participants.include?(user)
@@ -65,7 +65,7 @@ class BoxesController < ApplicationController
 
   # DELETE /boxes/:id/remove_participant
   def remove_participant
-    user = User.find(params[:user_id])
+    user = User.find(params[:email])
 
     if current_user == @box.admin
       if user == @box.admin
@@ -120,7 +120,7 @@ class BoxesController < ApplicationController
     pairs.each do |pair|
       Pair.create(giver: pair.first, recipient: pair.last, box: @box)
     end
-  
+
     # Формируем JSON в нужном формате
     json_response = pairs.map do |pair|
       {
@@ -138,7 +138,6 @@ class BoxesController < ApplicationController
   
     render json: json_response, status: :ok
   end
-  
   
   private
 
