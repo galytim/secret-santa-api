@@ -3,8 +3,7 @@ class WishlistsController < ApplicationController
     before_action :authenticate_user!, except: [:index, :show]
   
     def index
-      wishlists = Wishlist.all
-      render json: wishlists
+      render json: current_user.wishlists
     end
   
     def show
