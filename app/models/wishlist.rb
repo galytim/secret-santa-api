@@ -1,3 +1,5 @@
 class Wishlist < ApplicationRecord
     belongs_to :user
-end
+    validates :description, presence: true
+  end
+  
