@@ -8,4 +8,15 @@ class User < ApplicationRecord
 
    has_and_belongs_to_many :participated_boxes, class_name: "Box"
    
+SEXES = {
+    male: 0,
+    female: 1,
+    unknown: 2
+  }
+
+
+  # Метод для получения имени пола по его значению
+  def sex_name
+    SEXES.key(self.sex)
+  end
 end
