@@ -29,6 +29,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem "rspec-rails"
   gem "rails-controller-testing"
+  gem 'shoulda-matchers'
   gem 'factory_bot_rails'
   gem "ffaker"
 end
