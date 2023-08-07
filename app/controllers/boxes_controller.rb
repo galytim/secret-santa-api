@@ -124,29 +124,17 @@ class BoxesController < ApplicationController
     # Используем each_cons для создания пар участников
     participants = @box.participants.to_a.shuffle
     pairs = participants.each_cons(2).to_a
-    pairs << [participants.last, participants.first] if participants.size > 2
+    pairs << [participants.last, participants.first]
   
     # Для каждой пары создаем запись в таблице Pair
     pairs.each do |pair|
       Pair.create(giver: pair.first, recipient: pair.last, box: @box)
     end
-
-    # Формируем JSON в нужном формате
-    json_response = pairs.map do |pair|
-      {
-        giver_id: pair.first.id,
-        giver_name: pair.first.name,
-        giver_email: pair.first.email,
-        recipient_id: pair.last.id,
-        recipient_name: pair.last.name,
-        recipient_email: pair.last.email,
-        box_id: @box.id,
-        box_name: @box.nameBox
-      }
     
-    end
+    # Формируем JSON в нужном формате
   
-    render json: json_response, status: :ok
+    recipient = @box.pairs.find_by(giver: current_user)&.recipient
+    render json: {recipient:recipient}, status: :ok
   end
   
   private
