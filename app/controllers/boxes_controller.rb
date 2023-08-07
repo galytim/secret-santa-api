@@ -13,7 +13,7 @@ class BoxesController < ApplicationController
     recipient = @box.pairs.find_by(giver: current_user)&.recipient
     participants_data = @box.participants.map { |participant| { id: participant.id, name: participant.name, email: participant.email } }
     
-    render json: { box: @box, 
+    render json: { box: @box.attributes.except('created_at', 'updated_at', 'image'), 
                   participants: participants_data,
                   current_user_admin: current_user_admin, 
                   recipient: {
@@ -21,7 +21,7 @@ class BoxesController < ApplicationController
                     name: recipient&.name,
                     email: recipient&.email
                   }
-                }
+                }, status: :ok
   end
   # POST /boxes
   def create
