@@ -30,7 +30,7 @@ RSpec.describe UsersController, type: :controller do
     it 'updates user data for current user' do
       sign_in user
       new_name = 'New Name'
-      patch :update, params: { id: user.id, user: { phone: new_name } }
+      patch :update, params: { id: user.id, user: { name: new_name } }
       expect(response).to have_http_status(:success)
       user.reload
       expect(user.name).to eq(new_name)
