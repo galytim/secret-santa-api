@@ -9,7 +9,6 @@ FactoryBot.define do
         description { FFaker::Lorem.paragraph }
         admin { association :user }
         after(:create) do |box|
-        # Добавляем случайных пользователей в участники
         box.participants << create_list(:user, 2)
         end
     end
