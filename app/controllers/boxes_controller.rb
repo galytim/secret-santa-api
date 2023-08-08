@@ -4,6 +4,7 @@ class BoxesController < ApplicationController
 
   # GET /boxes
   def index
+    
     render json: current_user.participated_boxes
   end
 
@@ -76,7 +77,6 @@ class BoxesController < ApplicationController
   # DELETE /boxes/:id/remove_participant
   def remove_participant
     user = User.find(params[:user_id])
-
     if current_user == @box.admin
       if user == @box.admin
         new_admin = @box.second_registered_user
