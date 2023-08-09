@@ -60,7 +60,13 @@ class BoxesController < ApplicationController
 
   # POST /boxes/:id/add_participant
   def add_participant
+    
     user = User.find_by(email: params[:email])
+
+    if user.nil?
+      render json: { error: "User with the specified email was not found." }, status: :not_found
+      return
+    end
 
     if user == current_user || @box.admin == current_user
       if @box.participants.include?(user)
