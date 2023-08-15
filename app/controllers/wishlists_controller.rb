@@ -4,14 +4,14 @@ class WishlistsController < ApplicationController
   
     def index
       user = User.find(params[:user_id])
-      wishlists = user.wishlists
-      wishlists.map do |wishlist|
+      wishlists = user.wishlists.map do |wishlist|
         wishlist.slice(:id, :description, :user_id)
       end
       render json: wishlists
     end
+    
 
-    def show
+    def show  
       render json: wishlist_json(@wishlist)
     end
   
