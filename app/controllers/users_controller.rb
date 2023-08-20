@@ -12,7 +12,7 @@ class UsersController < ApplicationController
     def update
       if @user == current_user # Проверка, что обновление может выполнять только текущий пользователь
         if @user.update(user_params)
-          render json: @user
+          render json:  user_json
         else
           render json: { errors: @user.errors }, status: :unprocessable_entity
         end
