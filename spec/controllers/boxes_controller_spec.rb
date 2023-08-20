@@ -55,7 +55,8 @@ RSpec.describe BoxesController, type: :controller do
               "description" => box.description
             },
             "participants" => box.participants.map { |participant| participant.attributes.slice('id', 'name', 'email') },
-            "current_user_admin" => true, # Предполагаем, что администратор вошел в систему и это значение будет true
+            "isCurrentUserAdmin" => true, # Предполагаем, что администратор вошел в систему и это значение будет true
+            "isStarted" => false,
             "recipient" => { "email" => nil, "id" => nil, "name" => nil }
           }
           
