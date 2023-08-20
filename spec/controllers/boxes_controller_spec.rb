@@ -29,19 +29,14 @@ RSpec.describe BoxesController, type: :controller do
     end
 
     it 'returns the correct JSON data' do
-        # Подписываем пользователя с атрибутом admin: true
         sign_in admin
-  
-        # Вызываем метод show контроллера BoxesController с параметром id
+
         get :show, params: { id: box.id }
-  
-        # Проверяем успешный HTTP-ответ
+
         expect(response).to have_http_status(:success)
   
-        # Парсим JSON-ответ
         json_response = JSON.parse(response.body)
   
-        # Ожидаемые данные для сравнения
         expected_data = {
             "box" => {
               "id" => box.id,
@@ -55,12 +50,11 @@ RSpec.describe BoxesController, type: :controller do
               "description" => box.description
             },
             "participants" => box.participants.map { |participant| participant.attributes.slice('id', 'name', 'email') },
-            "isCurrentUserAdmin" => true, # Предполагаем, что администратор вошел в систему и это значение будет true
-            "isStarted" => false,
+            "is_сurrent_user_admin" => true, 
+            "is_started" => false,
             "recipient" => { "email" => nil, "id" => nil, "name" => nil }
           }
           
-        # Сравниваем только нужные данные
         expect(json_response).to eq(expected_data)
       end
       
