@@ -4,24 +4,37 @@ class BoxesController < ApplicationController
 
   # GET /boxes
   def index
+    boxes_data = current_user.participated_boxes.map do |box|
+      isCurrentUserAdmin = box.admin == current_user
+      isStarted = box.pairs.any?
+      
+      {
+        box: box.attributes.except('created_at', 'updated_at', 'image'), 
+        current_user_admin: isCurrentUserAdmin, 
+        is_started: isStarted
+      }
+    end
     
-    render json: current_user.participated_boxes
+    render json: boxes_data, status: :ok
   end
-
+  
   # GET /boxes/:id
   def show
-    current_user_admin = @box.admin == current_user
+    isCurrentUserAdmin = @box.admin == current_user
+    isStarted = @box.pairs.any?
     recipient = @box.pairs.find_by(giver: current_user)&.recipient
     participants_data = @box.participants.map { |participant| { id: participant.id, name: participant.name, email: participant.email } }
+
     
     render json: { box: @box.attributes.except('created_at', 'updated_at', 'image'), 
                   participants: participants_data,
-                  current_user_admin: current_user_admin, 
+                  isCurrentUserAdmin: isCurrentUserAdmin, 
                   recipient: {
                     id: recipient&.id,          
                     name: recipient&.name,
                     email: recipient&.email
-                  }
+                  },
+                  isStarted: isStarted
                 }, status: :ok
   end
   # POST /boxes
