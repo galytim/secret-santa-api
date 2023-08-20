@@ -9,14 +9,14 @@ class BoxesController < ApplicationController
       isStarted = box.pairs.any?
       
       {
-        box: box.attributes.except('created_at', 'updated_at', 'image'), 
-        current_user_admin: isCurrentUserAdmin, 
-        is_started: isStarted
+        box: box.attributes.except('created_at', 'updated_at', 'image')
+            .merge(current_user_admin: isCurrentUserAdmin, is_started: isStarted)
       }
     end
     
     render json: boxes_data, status: :ok
   end
+  
   
   # GET /boxes/:id
   def show
