@@ -14,11 +14,16 @@ Rails.application.routes.draw do
   resources :users, only: [:show, :update, :destroy] do
     resources :wishlists, only: [:index, :show, :create, :update, :destroy]
   end
-  resources :boxes do
+
+  resources :boxes, exept: [:index]do
     member do
-      get 'start'
-      post 'add_participant'
-      delete 'remove_participant'
+      post :add_participant
+      delete :remove_participant
+      get :start
+    end
+
+    collection do
+      post :filtered_index
     end
   end
 end
