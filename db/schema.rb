@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_07_142502) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_22_202452) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "boxes", force: :cascade do |t|
-    t.string "nameBox"
+    t.string "name"
     t.date "dateFrom"
     t.date "dateTo"
     t.integer "priceFrom"
