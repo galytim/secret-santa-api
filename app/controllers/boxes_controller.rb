@@ -1,20 +1,35 @@
 class BoxesController < ApplicationController
-  before_action :set_box, except: [:index, :create]
+  before_action :set_box, except: [:filtered_index,:create]
   before_action :authenticate_user!
 
-  # GET /boxes
-  def index
-    totalCount = current_user.participated_boxes.count
-    boxes_data = current_user.participated_boxes.page(params[:page]).per(params[:size]).map do |box|
-      is_сurrent_user_admin = box.admin == current_user
-      is_started = box.pairs.any?
-      
-      box.attributes.except('created_at', 'updated_at', 'image')
-          .merge(is_сurrent_user_admin: is_сurrent_user_admin, is_started: is_started)
+  def filtered_index
+    filters = params.permit(:page, :size, filters: [:field, :value])
+    page = filters[:page]
+    size = filters[:size]
+    filters_data = filters[:filters]
+  
+    boxes_query = current_user.participated_boxes
+  
+    filters_data.each do |filter|
+      field = filter[:field]
+      search_value = filter[:value]
+      if field.present? && search_value.present? && Box.column_names.include?(field)
+        boxes_query = boxes_query.where("#{field} ILIKE ?", "%#{search_value}%")
+      end
     end
-    
-    render json: {items: boxes_data, totalCount: totalCount }, status: :ok
+  
+    total_count = boxes_query.count
+    boxes_data = boxes_query.page(page).per(size).map do |box|
+      isCurrentUserAdmin = box.admin == current_user
+      isStarted = box.pairs.any?
+  
+      box_data = box.attributes.except('created_at', 'updated_at', 'image')
+      box_data.merge!(current_user_admin: isCurrentUserAdmin, is_started: isStarted)
+    end
+  
+    render json: { items: boxes_data, totalCount: total_count }, status: :ok
   end
+  
   
   
   
