@@ -7,6 +7,8 @@ ruby "3.0.2"
 gem "rails", "~> 7.0.6"
 
 gem "pg"
+# Pagination
+gem 'kaminari'
 
 gem "puma", "~> 5.0"
 

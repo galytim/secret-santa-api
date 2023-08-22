@@ -4,7 +4,8 @@ class BoxesController < ApplicationController
 
   # GET /boxes
   def index
-    boxes_data = current_user.participated_boxes.map do |box|
+    totalCount = current_user.participated_boxes.count
+    boxes_data = current_user.participated_boxes.page(params[:page]).per(params[:size]).map do |box|
       is_сurrent_user_admin = box.admin == current_user
       is_started = box.pairs.any?
       
@@ -12,7 +13,7 @@ class BoxesController < ApplicationController
           .merge(is_сurrent_user_admin: is_сurrent_user_admin, is_started: is_started)
     end
     
-    render json: boxes_data, status: :ok
+    render json: {items: boxes_data, totalCount: totalCount }, status: :ok
   end
   
   
