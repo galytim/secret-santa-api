@@ -12,7 +12,11 @@ Rails.application.routes.draw do
 
   # Маршруты для User и Wishlist
   resources :users, only: [:show, :update, :destroy] do
-    resources :wishlists, only: [:index, :show, :create, :update, :destroy]
+    resources :wishlists, except: :index do
+      collection do
+        post :filtered_index
+      end
+    end
   end
 
   resources :boxes, except: :index do
