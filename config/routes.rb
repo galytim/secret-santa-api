@@ -15,7 +15,7 @@ Rails.application.routes.draw do
     resources :wishlists, only: [:index, :show, :create, :update, :destroy]
   end
 
-  resources :boxes, exept: [:index]do
+  resources :boxes, except: :index do
     member do
       post :add_participant
       delete :remove_participant
