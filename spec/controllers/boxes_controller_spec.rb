@@ -10,7 +10,7 @@ RSpec.describe BoxesController, type: :controller do
   describe 'GET #index' do
     it 'returns a successful response' do
       sign_in user
-      get :index
+      post :filtered_index
       expect(response).to have_http_status(:success)
     end
   end
@@ -40,7 +40,7 @@ RSpec.describe BoxesController, type: :controller do
         expected_data = {
             "box" => {
               "id" => box.id,
-              "nameBox" => box.nameBox,
+              "name" => box.name,
               "dateFrom" => box.dateFrom.strftime('%Y-%m-%d'), # Преобразуйте дату в строку
               "dateTo" => box.dateTo.strftime('%Y-%m-%d'), # Преобразуйте дату в строку
               "priceFrom" => box.priceFrom,
@@ -86,16 +86,16 @@ RSpec.describe BoxesController, type: :controller do
     it 'updates box attributes' do
       sign_in admin
       new_name = 'Updated Box Name'
-      patch :update, params: { id: box.id, box: { nameBox: new_name } }
+      patch :update, params: { id: box.id, box: { name: new_name } }
       expect(response).to have_http_status(:success)
-      expect(box.reload.nameBox).to eq(new_name)
+      expect(box.reload.name).to eq(new_name)
     end
   end
 
   describe 'DELETE #destroy' do
     it 'updates admin when removing admin participant' do
       admin_user = User.create(name: 'Admin User', email: 'admin@example.com', password: 'password')
-      box = Box.create(nameBox: 'Test Box', admin: admin_user)
+      box = Box.create(name: 'Test Box', admin: admin_user)
     
       sign_in admin_user
     
@@ -110,7 +110,7 @@ RSpec.describe BoxesController, type: :controller do
     it 'returns error when non-admin tries to remove participant' do
       admin_user = User.create(name: 'Admin User', email: 'admin@example.com', password: 'password')
       participant_user = User.create(name: 'Participant User', email: 'participant@example.com', password: 'password')
-      box = Box.create(nameBox: 'Test Box', admin: admin_user, participants: [admin_user, participant_user])
+      box = Box.create(name: 'Test Box', admin: admin_user, participants: [admin_user, participant_user])
     
       sign_in participant_user
     
@@ -124,7 +124,7 @@ RSpec.describe BoxesController, type: :controller do
     
     it 'returns error when non-admin tries to remove self' do
       user = User.create(name: 'Test User', email: 'user@example.com', password: 'password')
-      box = Box.create(nameBox: 'Test Box', admin: user, participants: [user])
+      box = Box.create(name: 'Test Box', admin: user, participants: [user])
     
       sign_in user
     
