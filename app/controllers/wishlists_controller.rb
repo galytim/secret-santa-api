@@ -2,12 +2,29 @@ class WishlistsController < ApplicationController
     before_action :set_wishlist, only: [:show, :update, :destroy]
     before_action :authenticate_user!
   
-    def index
+    def filtered_index
+      filters = params.permit(:page, :size, filters: [:field, :value])
+      page = filters[:page]
+      size = filters[:size]
+      filters_data = filters[:filters]
       user = User.find(params[:user_id])
-      wishlists = user.wishlists.map do |wishlist|
-        wishlist.slice(:id, :description, :user_id)
+
+
+      wishlists = user.wishlists
+
+      filters_data.each do |filter|
+        field = filter[:field]
+        search_value = filter[:value]
+        field_and_value_present = field.present? && search_value.present? && Wishlist.column_names.include?(field)
+        wishlist_query = wishlists.where("#{field} ILIKE ?", "%#{search_value}%") if field_and_value_present
+
+        total_count = wishlist_query.count
+        wislists_data = wishlist_query.page(page).per(size).map do |wishlist|
+          wislist_data = wishlist.attributes.except('created_at', 'updated_at')
+        end
+        render json: { items: wislists_data, totalCount: total_count}
       end
-      render json: wishlists
+
     end
     
 
