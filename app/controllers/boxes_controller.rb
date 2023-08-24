@@ -7,29 +7,14 @@ class BoxesController < ApplicationController
     page = filters[:page]
     size = filters[:size]
     filters_data = filters[:filters]
-    
+  
     boxes_query = current_user.participated_boxes
+  
+    filtered_query = Box.apply_filters(boxes_query, filters_data)
+    total_count = filtered_query.count
+    boxes = filtered_query.page(page).per(size)
     
-    if filters_data.present?
-      filters_data.each do |filter|
-        field = filter[:field]
-        search_value = filter[:value]
-        next unless field.present? && search_value.present? && Box.column_names.include?(field)
-    
-        boxes_query = boxes_query.where("#{field} ILIKE ?", "%#{search_value}%")
-      end
-    end
-    
-    total_count = boxes_query.count
-    boxes = boxes_query.page(page).per(size)
-    
-    boxes_data = boxes.map do |box|
-      isCurrentUserAdmin = box.admin == current_user
-      isStarted = box.pairs.any?
-    
-      box_data = box.attributes.except('created_at', 'updated_at', 'image')
-      box_data.merge!(current_user_admin: isCurrentUserAdmin, is_started: isStarted)
-    end
+    boxes_data = boxes.map { |box| Box.present_box(box, current_user) }
     
     render json: { items: boxes_data, totalCount: total_count }, status: :ok
   end
