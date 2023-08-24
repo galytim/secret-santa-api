@@ -7,44 +7,33 @@ class BoxesController < ApplicationController
     page = filters[:page]
     size = filters[:size]
     filters_data = filters[:filters]
-  
+    
     boxes_query = current_user.participated_boxes
-  
-    if filters_data.blank? || filters_data.none? { |filter| filter[:field].present? && filter[:value].present? && Box.column_names.include?(filter[:field]) }
-      total_count = boxes_query.count
-      boxes_data = boxes_query.page(page).per(size).map do |box|
-        isCurrentUserAdmin = box.admin == current_user
-        isStarted = box.pairs.any?
-  
-        box_data = box.attributes.except('created_at', 'updated_at', 'image')
-        box_data.merge!(current_user_admin: isCurrentUserAdmin, is_started: isStarted)
-      end
-  
-      render json: { items: boxes_data, totalCount: total_count }, status: :ok
-    else
-      result_data = []
-      total_count = 0
-  
+    
+    if filters_data.present?
       filters_data.each do |filter|
         field = filter[:field]
         search_value = filter[:value]
         next unless field.present? && search_value.present? && Box.column_names.include?(field)
-  
-        filtered_boxes_query = boxes_query.where("#{field} ILIKE ?", "%#{search_value}%")
-        total_count += filtered_boxes_query.count
-        filtered_boxes_data = filtered_boxes_query.page(page).per(size).map do |box|
-          isCurrentUserAdmin = box.admin == current_user
-          isStarted = box.pairs.any?
-  
-          box_data = box.attributes.except('created_at', 'updated_at', 'image')
-          box_data.merge!(current_user_admin: isCurrentUserAdmin, is_started: isStarted)
-        end
-        result_data.concat(filtered_boxes_data)
+    
+        boxes_query = boxes_query.where("#{field} ILIKE ?", "%#{search_value}%")
       end
-  
-      render json: { items: result_data, totalCount: total_count }, status: :ok
     end
+    
+    total_count = boxes_query.count
+    boxes = boxes_query.page(page).per(size)
+    
+    boxes_data = boxes.map do |box|
+      isCurrentUserAdmin = box.admin == current_user
+      isStarted = box.pairs.any?
+    
+      box_data = box.attributes.except('created_at', 'updated_at', 'image')
+      box_data.merge!(current_user_admin: isCurrentUserAdmin, is_started: isStarted)
+    end
+    
+    render json: { items: boxes_data, totalCount: total_count }, status: :ok
   end
+  
   
   
   

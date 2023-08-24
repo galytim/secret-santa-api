@@ -1,6 +1,7 @@
 class WishlistsController < ApplicationController
     before_action :set_wishlist, only: [:show, :update, :destroy]
     before_action :authenticate_user!
+    
     def filtered_index
       filters = params.permit(:page, :size, filters: [:field, :value])
       page = filters[:page]
