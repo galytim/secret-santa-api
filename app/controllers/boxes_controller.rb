@@ -77,7 +77,10 @@ class BoxesController < ApplicationController
 
   # POST /boxes/:id/add_participant
   def add_participant
-    
+    unless @box.invitable
+      render json: { error: "Эта коробка закрыта для добавления новых участников" }, status: :forbidden
+      return
+    end
     user = User.find_by(email: params[:email])
 
     if user.nil?
@@ -157,6 +160,8 @@ class BoxesController < ApplicationController
     # Формируем JSON в нужном формате
   
     recipient = @box.pairs.find_by(giver: current_user)&.recipient
+    @box.invitable = false
+    @box.save
     render json: {recipient:recipient}, status: :ok
   end
   
