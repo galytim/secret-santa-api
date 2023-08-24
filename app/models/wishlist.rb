@@ -22,7 +22,7 @@ class Wishlist < ApplicationRecord
       total_count = wishlists.count
       wishlists = wishlists.page(page).per(size)
       wishlists_data = wishlists.map do |wishlist|
-        wishlist.attributes.except('created_at', 'updated_at',"user_id")
+        wishlist.attributes.slice('id', 'description')
       end
   
       { items: wishlists_data, totalCount: total_count }
