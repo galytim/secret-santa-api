@@ -172,6 +172,6 @@ class BoxesController < ApplicationController
   end
 
   def box_params
-    params.require(:box).permit(:name, :dateFrom, :dateTo, :priceFrom, :priceTo, :place, :description, :image)
+    params.require(:box).permit(:name, :dateTo, :priceFrom, :priceTo, :place, :description, :image)
   end
 end
