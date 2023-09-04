@@ -16,7 +16,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_24_080300) do
 
   create_table "boxes", force: :cascade do |t|
     t.string "name"
-    t.date "DateTo"
+    t.date "dateTo"
     t.integer "priceFrom"
     t.integer "priceTo"
     t.string "place"
