@@ -31,7 +31,7 @@ class WishlistsController < ApplicationController
     end
   
     def update
-      if @wishlist.user == current_user # Проверка, что обновление может выполнять только владелец списка
+      if @wishlist.user == current_user 
         if @wishlist.update(wishlist_params)
           render json: wishlist_json(@wishlist)
         else
@@ -68,7 +68,7 @@ class WishlistsController < ApplicationController
     end
 
     def wishlist_json(wishlist)
-      wishlist.slice(:id, :description, :user_id)
+      wishlist.slice(:id, :description, :user_id,:title)
     end
   end
   

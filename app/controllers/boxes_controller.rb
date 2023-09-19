@@ -84,19 +84,19 @@ class BoxesController < ApplicationController
     user = User.find_by(email: params[:email])
 
     if user.nil?
-      render json: { error: "User with the specified email was not found." }, status: :not_found
+      render json: { error: "Пользователь не найден" }, status: :not_found
       return
     end
 
     if user == current_user || @box.admin == current_user
       if @box.participants.include?(user)
-        render json: { error: "User is already a participant in this box." }, status: :unprocessable_entity
+        render json: { error: "Пользователь уже в игре" }, status: :unprocessable_entity
       else
         @box.participants << user
-        render json: { message: "User successfully added as a participant to this box." }, status: :ok
+        render json: { message: "Круто ты в игре!" }, status: :ok
       end
     else
-      render json: { error: "You don't have permission to add this user as a participant." }, status: :forbidden
+      render json: { error: "У тебя нет прав на добавление пользователя" }, status: :forbidden
     end
   end
 
@@ -110,20 +110,20 @@ class BoxesController < ApplicationController
         if new_admin
           @box.update(admin: new_admin)
           @box.participants.delete(user)
-          render json: { message: "Admin successfully updated." }, status: :ok
+          render json: { message: "Админ успешно обновлен" }, status: :ok
         else
           @box.destroy
           head :no_content
         end
       else
         if @box.participants.delete(user)
-          render json: { message: "User successfully removed from participants in this box." }, status: :ok
+          render json: { message: "Вы удалили пользователя" }, status: :ok
         else
-          render json: { error: "User is not a participant in this box." }, status: :unprocessable_entity
+          render json: { error: "Пользователя и так тут нет" }, status: :unprocessable_entity
         end
       end
     else
-      render json: { error: "You don't have permission to remove this user from participants." }, status: :forbidden
+      render json: { error: "У тебя нет прав на удаление" }, status: :forbidden
     end
   end
 
@@ -172,6 +172,6 @@ class BoxesController < ApplicationController
   end
 
   def box_params
-    params.require(:box).permit(:name, :dateTo, :priceFrom, :priceTo, :place, :description, :image)
+    params.require(:box).permit(:name, :dateTo, :priceFrom, :priceTo, :place, :description, :image,:isCheckResult)
   end
 end
