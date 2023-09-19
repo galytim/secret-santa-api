@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_19_181630) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_19_180734) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,7 +25,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_19_181630) do
     t.bigint "admin_id"
     t.string "description"
     t.boolean "invitable", default: true
-    t.date "dateTo"
   end
 
   create_table "boxes_users", id: false, force: :cascade do |t|
