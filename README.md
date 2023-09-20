@@ -1,24 +1,17 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Secret-santa-api 
 
-Things you may want to cover:
+* Ruby version ruby-3.0.2
+* Rails 7.0.6
 
-* Ruby version
 
-* System dependencies
+* rake db:create
 
-* Configuration
+* rake db:migrate
 
-* Database creation
+* How to run the test suite:
+    rspec [path]
 
-* Database initialization
 
-* How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
