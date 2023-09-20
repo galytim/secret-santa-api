@@ -26,11 +26,11 @@ class BoxesController < ApplicationController
   def show
     is_сurrent_user_admin = @box.admin == current_user
     is_started = @box.pairs.any?
-    recipient = @box.pairs.find_by(giver: current_user)&.recipient
+    recipient  = @box.pairs.find_by(giver: current_user)&.recipient
+    giver = @box.pairs.find_by(recipient: current_user)&.giver if @box.isCheckResult
     participants_data = @box.participants.map { |participant| { id: participant.id, name: participant.name, email: participant.email } }
 
-    
-    render json: {
+    response_hash = {
       box: @box.attributes.except('created_at', 'updated_at', 'image_data').merge(image_url: @box.image_url),
       participants: participants_data,
       is_сurrent_user_admin: is_сurrent_user_admin, 
@@ -40,7 +40,16 @@ class BoxesController < ApplicationController
         email: recipient&.email
       },
       is_started: is_started
-    }, status: :ok
+    }
+    
+    # Добавляем giver в JSON только если giver существует
+    response_hash[:giver] = {
+      id: giver.id,          
+      name: giver.name,
+      email: giver.email
+    } if giver.present?
+    
+    render json: response_hash, status: :ok
   end    
   # POST /boxes
   def create
@@ -134,13 +143,13 @@ class BoxesController < ApplicationController
   
     # Проверяем, достаточно ли участников для создания хотя бы одной пары
     if @box.participants.size <= 1
-      render json: { error: "Not enough participants in this box to start the draw." }, status: :unprocessable_entity
+      render json: { error: "Недостаточно игроков для запуска" }, status: :unprocessable_entity
       return
     end
   
     # Проверяем, является ли текущий пользователь администратором коробки
     unless @box.admin == current_user
-      render json: { error: "You don't have permission to start this game." }, status: :forbidden
+      render json: { error: "У тебя нет прав для запуска игры" }, status: :forbidden
       return
     end
   
@@ -157,13 +166,15 @@ class BoxesController < ApplicationController
     pairs.each do |pair|
       Pair.create(giver: pair.first, recipient: pair.last, box: @box)
     end
-    
     # Формируем JSON в нужном формате
-  
+    
     recipient = @box.pairs.find_by(giver: current_user)&.recipient
+    recipient_data = recipient.slice(:id, :email, :name)
     @box.invitable = false
     @box.save
-    render json: {recipient:recipient}, status: :ok
+    render json: {
+      recipient:recipient_data
+      }, status: :ok
   end
   
   private
