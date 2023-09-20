@@ -1,19 +1,26 @@
 class Users::RegistrationsController < Devise::RegistrationsController
   include RackSessionsFix
-  
   respond_to :json
+
   private
 
-  def respond_with(current_user, _opts = {})
-    if resource.persisted?
+  def respond_with(resource, _opts = {})
+    if resource.errors.empty?
       render json: {
-        status: {code: 200, message: 'Signed up successfully.'},
+        status: { code: 200, message: 'Вы успешно зарегистрировались' },
         data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
       }
     else
-      render json: {
-        status: {message: "User couldn't be created successfully. #{current_user.errors.full_messages.to_sentence}"}
-      }, status: :unprocessable_entity
+      # Проверяем, есть ли ошибка валидации уникальности email
+      if resource.errors[:email].include?("has already been taken")
+        render json: {
+          status: { message: "Данная почта уже занята" }
+        }, status: :unprocessable_entity
+      else
+        render json: {
+          status: { message: "Извините у нас не получилось создать пользователя, но вы можете попробовать еще раз" }
+        }, status: :unprocessable_entity
+      end
     end
   end
 end
