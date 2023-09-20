@@ -17,7 +17,9 @@ class WishlistsController < ApplicationController
     
 
     def show  
-      render json: wishlist_json(@wishlist)
+      wishlist = Wishlist.find(params[:id])
+      serializer = WishlistSerializer.new(wishlist)
+      render json: serializer.serializable_hash
     end
   
     def create
@@ -59,16 +61,15 @@ class WishlistsController < ApplicationController
         @wishlist = Wishlist.find(params[:id])
       rescue ActiveRecord::RecordNotFound
       render json: { error: 'Wishlist not found' }, status: :not_found
-    end
-    
-    end
-  
-    def wishlist_params
-      params.require(:wishlist).permit(:description,:title)
+      end
     end
 
     def wishlist_json(wishlist)
-      wishlist.slice(:id, :description,:title, :user_id)
+      wishlist.slice(:id, :description,:title,:image_url, :user_id)
+    end
+
+    def wishlist_params
+      params.require(:wishlist).permit(:description,:title,:image)
     end
   end
   

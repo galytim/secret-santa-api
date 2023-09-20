@@ -12,6 +12,9 @@ gem 'kaminari'
 
 gem "puma", "~> 5.0"
 
+#image upload
+gem 'shrine', '~> 3.3'
+
 gem "devise"
 gem "devise-jwt"
 gem "jsonapi-serializer"
