@@ -30,23 +30,24 @@ class BoxesController < ApplicationController
     participants_data = @box.participants.map { |participant| { id: participant.id, name: participant.name, email: participant.email } }
 
     
-    render json: { box: @box.attributes.except('created_at', 'updated_at', 'image'), 
-                  participants: participants_data,
-                  is_сurrent_user_admin: is_сurrent_user_admin, 
-                  recipient: {
-                    id: recipient&.id,          
-                    name: recipient&.name,
-                    email: recipient&.email
-                  },
-                  is_started: is_started
-                }, status: :ok
-  end
+    render json: {
+      box: @box.attributes.except('created_at', 'updated_at', 'image_data').merge(image_url: @box.image_url),
+      participants: participants_data,
+      is_сurrent_user_admin: is_сurrent_user_admin, 
+      recipient: {
+        id: recipient&.id,          
+        name: recipient&.name,
+        email: recipient&.email
+      },
+      is_started: is_started
+    }, status: :ok
+  end    
   # POST /boxes
   def create
     box = current_user.administration_boxes.build(box_params)
     if box.save
       box.participants << current_user
-      render json: box, status: :created
+      render json: box_json(box), status: :created
     else
       render json: { errors: box.errors.full_messages }, status: :unprocessable_entity
     end
@@ -172,6 +173,9 @@ class BoxesController < ApplicationController
   end
 
   def box_params
-    params.require(:box).permit(:name, :dateTo, :priceFrom, :priceTo, :place, :description, :image,:isCheckResult)
+    params.require(:box).permit(:name, :dateTo, :priceFrom, :priceTo, :place, :description,:isCheckResult,:image)
+  end
+  def box_json(box)
+    box.attributes.except("created_at","updated_at","image_data","image").merge(image_url: box.image_url)
   end
 end
