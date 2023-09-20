@@ -64,11 +64,11 @@ class WishlistsController < ApplicationController
     end
   
     def wishlist_params
-      params.require(:wishlist).permit(:description)
+      params.require(:wishlist).permit(:description,:title)
     end
 
     def wishlist_json(wishlist)
-      wishlist.slice(:id, :description, :user_id,:title)
+      wishlist.slice(:id, :description,:title, :user_id)
     end
   end
   
