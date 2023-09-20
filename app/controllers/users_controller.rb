@@ -1,6 +1,6 @@
 # app/controllers/users_controller.rb
 class UsersController < ApplicationController
-    before_action :authenticate_user!
+    #before_action :authenticate_user!
     before_action :set_user, only: [:show, :update, :destroy]
   
     def show
@@ -37,7 +37,7 @@ class UsersController < ApplicationController
     end
   
     def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation, :dateOfBirth, :sex, :phone)
+      params.require(:user).permit(:name, :dateOfBirth, :sex, :phone, :image)
     end
     
     def user_json
@@ -45,7 +45,7 @@ class UsersController < ApplicationController
     
       user_attributes[:dateOfBirth] = @user.dateOfBirth.strftime('%Y-%m-%d') if @user.dateOfBirth.present?
       user_attributes[:phone] = @user.phone if @user.phone.present?
-    
+      user_attributes[:image_url] =@user.image_url
       user_attributes
     end
   end
