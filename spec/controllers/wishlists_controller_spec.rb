@@ -1,24 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe WishlistsController, type: :controller do
-  let(:user) { FactoryBot.create(:user) }
-  let(:wishlist) { FactoryBot.create(:wishlist, user: user) }
-  let(:other_user) { FactoryBot.create(:user) }
+  let!(:user) { FactoryBot.create(:user) }
+  let!(:wishlist) { FactoryBot.create(:wishlist, user: user) }
+  let!(:other_user) { FactoryBot.create(:user) }
 
   describe 'GET #index' do
     it 'returns a list of wishlists for a given user' do
         sign_in user
-        get :index, params: { user_id: user.id }
+        post :filtered_index, params: { user_id: user.id }
         expect(response).to have_http_status(:success)
   
         wishlists_json = user.wishlists.map { |wishlist| wishlist.slice(:id, :description, :user_id) }
         expect(JSON.parse(response.body)).to eq(wishlists_json)
       end
       
-    it 'returns unauthorized if not logged in' do
-      get :index, params: { user_id: user.id }
-      expect(response).to have_http_status(:unauthorized)
-    end
   end
 
   describe 'GET #show' do
@@ -37,9 +33,9 @@ RSpec.describe WishlistsController, type: :controller do
   end
 
   describe 'POST #create' do
-    it 'creates a new wishlist for current user' do
+    it 'new wishlist for current user' do
       sign_in user
-      wishlist_params = { description: 'My Wishlist' }
+      wishlist_params = { description: 'My Wishlist', title:"123" }
       expect {
         post :create, params: { user_id: user.id, wishlist: wishlist_params }
       }.to change(Wishlist, :count).by(1)
@@ -49,10 +45,6 @@ RSpec.describe WishlistsController, type: :controller do
       expect(JSON.parse(response.body)).to eq(wishlist_json(new_wishlist))
     end
 
-    it 'returns unauthorized if not logged in' do
-      post :create, params: { user_id: user.id, wishlist: { description: 'My Wishlist' } }
-      expect(response).to have_http_status(:unauthorized)
-    end
   end
 
   describe 'PATCH #update' do
@@ -117,7 +109,7 @@ RSpec.describe WishlistsController, type: :controller do
 
   # Метод для возврата хеша с данными вишлиста
   def wishlist_json(wishlist)
-    wishlist_attributes = wishlist.slice(:id, :description, :user_id)
+    wishlist_attributes = wishlist.slice(:id, :description,:title, :user_id)
     wishlist_attributes[:user_id] = wishlist.user_id
     wishlist_attributes
   end

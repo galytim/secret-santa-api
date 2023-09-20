@@ -1,7 +1,6 @@
 FactoryBot.define do
     factory :box do
         name { FFaker::Product.product_name }
-        dateFrom { Date.today }
         dateTo { Date.today + 7.days }
         priceFrom { rand(0..50) }
         priceTo { rand(50..100) }

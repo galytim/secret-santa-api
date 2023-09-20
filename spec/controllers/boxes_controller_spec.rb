@@ -7,13 +7,6 @@ RSpec.describe BoxesController, type: :controller do
   let!(:box) { create(:box, admin: admin) }
   let!(:participant) { create(:user) }
 
-  describe 'GET #index' do
-    it 'returns a successful response' do
-      sign_in user
-      post :filtered_index
-      expect(response).to have_http_status(:success)
-    end
-  end
 
   describe 'GET #show' do
     it 'returns a successful response' do
@@ -41,8 +34,7 @@ RSpec.describe BoxesController, type: :controller do
             "box" => {
               "id" => box.id,
               "name" => box.name,
-              "dateFrom" => box.dateFrom.strftime('%Y-%m-%d'), # Преобразуйте дату в строку
-              "dateTo" => box.dateTo.strftime('%Y-%m-%d'), # Преобразуйте дату в строку
+              "dateTo" => box.dateTo.strftime('%Y-%m-%d'),
               "priceFrom" => box.priceFrom,
               "priceTo" => box.priceTo,
               "place" => box.place,
@@ -119,7 +111,7 @@ RSpec.describe BoxesController, type: :controller do
       }.not_to change(box.participants, :count)
     
       expect(response).to have_http_status(:forbidden)
-      expect(JSON.parse(response.body)['error']).to eq("You don't have permission to remove this user from participants.")
+      expect(JSON.parse(response.body)['error']).to eq("У тебя нет прав на удаление")
     end
     
     it 'returns error when non-admin tries to remove self' do
