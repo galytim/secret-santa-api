@@ -51,6 +51,9 @@ class BoxesController < ApplicationController
     
     render json: response_hash, status: :ok
   end    
+
+
+
   # POST /boxes
   def create
     box = current_user.administration_boxes.build(box_params)
@@ -62,6 +65,8 @@ class BoxesController < ApplicationController
     end
   end
 
+
+
   # PATCH/PUT /boxes/:id
   def update
     if @box.admin == current_user
@@ -71,9 +76,11 @@ class BoxesController < ApplicationController
         render json: { errors: @box.errors.full_messages }, status: :unprocessable_entity
       end
     else
-      render json: { error: "You don't have permission to update this box." }, status: :forbidden
+      render json: { error: "У тебя нет прав для этого" }, status: :forbidden
     end
   end
+
+
 
   # DELETE /boxes/:id
   def destroy
@@ -84,7 +91,9 @@ class BoxesController < ApplicationController
       render json: { error: "You don't have permission to delete this box." }, status: :forbidden
     end
   end
+  
 
+  
   # POST /boxes/:id/add_participant
   def add_participant
     unless @box.invitable
@@ -172,6 +181,10 @@ class BoxesController < ApplicationController
     recipient_data = recipient.slice(:id, :email, :name)
     @box.invitable = false
     @box.save
+    @box.participants.each do |user|
+      UserMailer.with(user: user).start_game.deliver_now
+    end
+
     render json: {
       recipient:recipient_data
       }, status: :ok
