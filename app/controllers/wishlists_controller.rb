@@ -40,7 +40,7 @@ class WishlistsController < ApplicationController
           render json: { errors: @wishlist.errors }, status: :unprocessable_entity
         end
       else
-        render json: { error: "Access denied." }, status: :unauthorized
+        render json: { error: "У тебя нет прав для этого" }, status: :unauthorized
       end
     end
   
@@ -50,7 +50,7 @@ class WishlistsController < ApplicationController
         head :no_content
         
       else
-        render json: { error: "Access denied." }, status: :unauthorized
+        render json: { error: "У тебя нет прав для этого" }, status: :unauthorized
       end
     end
   
@@ -60,7 +60,7 @@ class WishlistsController < ApplicationController
       begin
         @wishlist = Wishlist.find(params[:id])
       rescue ActiveRecord::RecordNotFound
-      render json: { error: 'Wishlist not found' }, status: :not_found
+      render json: { error: 'Я не нашел такого вишлиста' }, status: :not_found
       end
     end
 

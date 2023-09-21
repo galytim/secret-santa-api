@@ -17,7 +17,7 @@ class UsersController < ApplicationController
           render json: { errors: @user.errors }, status: :unprocessable_entity
         end
       else
-        render json: { error: "Access denied." }, status: :unauthorized
+        render json: { error: "У тебя нет прав для этого" }, status: :unauthorized
       end
     end
   
@@ -26,7 +26,7 @@ class UsersController < ApplicationController
         @user.destroy
         head :no_content
       else
-        render json: { error: "Access denied." }, status: :unauthorized
+        render json: { error: "У тебя нет прав для этого" }, status: :unauthorized
       end
     end
   
