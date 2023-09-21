@@ -1,5 +1,5 @@
 class UserMailer < ApplicationMailer
-    default from: 'Santa@Santa.com'
+    default from: "galy.tim@gmail.com"
   
     def start_game
       @user = params[:user]
