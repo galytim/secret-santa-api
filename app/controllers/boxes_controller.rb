@@ -112,6 +112,7 @@ class BoxesController < ApplicationController
         render json: { error: "Пользователь уже в игре" }, status: :unprocessable_entity
       else
         @box.participants << user
+        UserMailer.with(user: user).send_invite.deliver_now
         render json: { message: "Круто ты в игре!" }, status: :ok
       end
     else
