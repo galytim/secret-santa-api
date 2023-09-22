@@ -5,4 +5,9 @@ class UserMailer < ApplicationMailer
       @user = params[:user]
       mail(to: @user.email, subject: 'Игра запущена!')
     end
+
+    def send_invite
+      @user = params[:user]
+      mail(to: @user.email, subject: 'Вас пригласили поиграть в тайного Санту!')
+    end
   end
