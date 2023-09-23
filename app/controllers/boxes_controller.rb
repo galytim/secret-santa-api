@@ -197,6 +197,9 @@ class BoxesController < ApplicationController
     @box.participants.each do |user|
       UserMailer.with(user: user).start_game.deliver_now
     end
+    render json: {
+      message: "Уведомление о запуске коробки разостланы всем участникам"
+      },
   end
 
 
