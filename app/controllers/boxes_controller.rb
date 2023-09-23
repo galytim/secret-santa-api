@@ -120,6 +120,9 @@ class BoxesController < ApplicationController
     end
   end
 
+
+
+
   # DELETE /boxes/:id/remove_participant
   def remove_participant
     user = User.find(params[:user_id])
@@ -182,15 +185,22 @@ class BoxesController < ApplicationController
     recipient_data = recipient.slice(:id, :email, :name)
     @box.invitable = false
     @box.save
-    @box.participants.each do |user|
-      UserMailer.with(user: user).start_game.deliver_now
-    end
+    
 
     render json: {
       recipient:recipient_data
       }, status: :ok
   end
   
+
+  def send_start_game 
+    @box.participants.each do |user|
+      UserMailer.with(user: user).start_game.deliver_now
+    end
+  end
+
+
+
   private
 
   def set_box
