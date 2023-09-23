@@ -199,7 +199,7 @@ class BoxesController < ApplicationController
     end
     render json: {
       message: "Уведомление о запуске коробки разостланы всем участникам"
-      },
+      }, status: :ok
   end
 
 
