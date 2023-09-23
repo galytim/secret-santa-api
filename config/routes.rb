@@ -24,6 +24,7 @@ Rails.application.routes.draw do
       post :add_participant
       delete :remove_participant
       get :start
+      get :send_start_game
     end
 
     collection do
