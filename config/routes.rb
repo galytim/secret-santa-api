@@ -31,4 +31,9 @@ Rails.application.routes.draw do
       post :filtered_index
     end
   end
+  resources :users, only: [:show, :update, :destroy] do
+    collection do
+      post :reset_password
+    end
+  end
 end

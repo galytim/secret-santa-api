@@ -14,7 +14,7 @@ Devise.setup do |config|
     jwt.expiration_time = 45000.minutes.to_i
   end
 
-  config.mailer_sender = 'donotreply@example.com'
+  config.mailer_sender = Rails.application.credentials.dig(:gmail, :email), 
   config.mailer = 'UserMailer'
   config.reset_password_within = 2.weeks
 
