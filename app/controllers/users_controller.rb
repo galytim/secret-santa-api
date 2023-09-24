@@ -1,6 +1,6 @@
 # app/controllers/users_controller.rb
 class UsersController < ApplicationController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, except: [:reset_password]
     before_action :set_user, only: [:show, :update, :destroy]
   
     def show
@@ -28,6 +28,11 @@ class UsersController < ApplicationController
       else
         render json: { error: "У тебя нет прав для этого" }, status: :unauthorized
       end
+    end
+    def reset_password
+      user = User.find_by(email: params[:email])
+      UserMailer.with(user: user).reset_password_instructions.deliver_now
+      render json: { message: "Вам отправлено сообщение с инструкциями по восстановлению пароля"}, status: :ok
     end
   
     private
