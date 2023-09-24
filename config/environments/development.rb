@@ -6,7 +6,7 @@ Rails.application.configure do
   config.eager_load = false
   config.consider_all_requests_local = true
   config.server_timing = true
-
+  config.action_mailer.default_url_options = { :host => "localhost:3000" }
   if Rails.root.join("tmp/caching-dev.txt").exist?
     config.cache_store = :memory_store
     config.public_file_server.headers = {
