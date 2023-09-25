@@ -24,7 +24,7 @@ class BoxesController < ApplicationController
   
   # GET /boxes/:id
   def show
-    is_сurrent_user_admin = @box.admin == current_user
+    is_current_user_admin = @box.admin == current_user
     is_started = @box.pairs.any?
     recipient  = @box.pairs.find_by(giver: current_user)&.recipient
     giver = @box.pairs.find_by(recipient: current_user)&.giver if @box.isCheckResult
@@ -33,7 +33,7 @@ class BoxesController < ApplicationController
     response_hash = {
       box: @box.attributes.except('created_at', 'updated_at', 'image_data').merge(image_url: @box.image_url),
       participants: participants_data,
-      is_сurrent_user_admin: is_сurrent_user_admin, 
+      is_current_user_admin: is_current_user_admin, 
       recipient: {
         id: recipient&.id,          
         name: recipient&.name,
