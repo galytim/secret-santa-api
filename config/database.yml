@@ -16,7 +16,10 @@ test:
 
 
 production:
-  <<: *default
-  database: secret-santa-api_production
-  username: secret-santa-api
-  password: <%= ENV["SECRET-SANTA-API_DATABASE_PASSWORD"] %>
+  adapter: postgresql
+  encoding: utf8
+  database: secret_santa_api_production
+  username: secret_santa_api
+  password: <%= ENV["SECRET_SANTA_API_DATABASE_PASSWORD"] %>
+  host: 127.0.0.1
+  port: 5432

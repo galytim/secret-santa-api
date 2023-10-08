@@ -16,6 +16,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_20_184422) do
 
   create_table "boxes", force: :cascade do |t|
     t.string "name"
+    t.date "dateTo"
     t.integer "priceFrom"
     t.integer "priceTo"
     t.string "place"
@@ -24,7 +25,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_20_184422) do
     t.bigint "admin_id"
     t.string "description"
     t.boolean "invitable", default: true
-    t.date "dateTo"
     t.boolean "isCheckResult", default: false
     t.text "image_data"
   end
